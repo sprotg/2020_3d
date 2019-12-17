@@ -6,6 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
+datavisualisering/*.csv
+datavisualisering/*.png
+datavisualisering/*.txt
+datavisualisering/noter.*
+datavisualisering/test2.py
+
 # Distribution / packaging
 .Python
 build/

@@ -54,7 +54,7 @@ while not cmd.startswith('q'):
         fig, ax = plt.subplots()
         for row in data:
             if row['Uddannelse'] == 'HTX':
-                for n in range(1,8):
+                for n in range(1,8):q
                     tal = []
                     aar = []
                     for key, value in list(row.items())[1:]:
