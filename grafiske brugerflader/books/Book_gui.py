@@ -30,7 +30,10 @@ class Book_gui(ttk.Frame):
             self.can.delete("all")
             print(b.ratings[0]/sum(b.ratings))
 
-            self.can.create_rectangle(10,190,30,190-200*(b.ratings[0]/sum(b.ratings)))
+            for i in range(len(b.ratings)):
+                self.can.create_rectangle(10 + 30*i,190,30 + 30*i,190-200*(b.ratings[i]/sum(b.ratings)))
+            self.can.create_line(5,195,185,195, arrow=tk.LAST)
+            self.can.create_line(5,195,5,5, arrow=tk.LAST)
 
 
     def slet_bog(self):

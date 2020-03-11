@@ -19,7 +19,7 @@ class Book:
         return r/sum(self.ratings)
 
     def give_rating(self, r):
-        if 0 <= r <= 5:
+        if 0 < r <= 5:
             self.ratings[int(r)-1] += 1
         else:
             print("Fejl, rating er ikke gyldig")
