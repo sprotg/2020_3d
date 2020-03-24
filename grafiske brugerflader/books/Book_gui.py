@@ -37,6 +37,7 @@ class Book_gui(ttk.Frame):
 
 
     def slet_bog(self):
+<<<<<<< HEAD
         def close():
             dlg.destroy()
             dlg.update()
@@ -66,6 +67,19 @@ class Book_gui(ttk.Frame):
         but_ok = ttk.Button(dlg, text="Bekræft", command=confirm)
         but_ok.grid(column=1,row=1)
 
+=======
+        curItem = self.db_view.item(self.db_view.focus())['values']
+
+        if len(curItem) > 0:
+            b = Book()
+            b.titel = curItem[0]
+            b.forfatter = curItem[1]
+            b.aarstal = curItem[2]
+            b.id = int(curItem[4])
+
+            self.data.slet_bog(b)
+            self.opdater_tabel()
+>>>>>>> b8364ef3501439abd7bdc877944d3d74911206c0
 
 
     def rediger_bog(self):
