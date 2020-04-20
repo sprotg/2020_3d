@@ -12,7 +12,7 @@ class Book_gui(ttk.Frame):
         ttk.Frame.__init__(self, master)
 
         self.data = Books_data(False)
-        
+
         self.build_GUI()
 
         self.opdater_tabel()
@@ -42,7 +42,6 @@ class Book_gui(ttk.Frame):
 
 
     def slet_bog(self):
-<<<<<<< HEAD
         def close():
             dlg.destroy()
             dlg.update()
@@ -72,19 +71,6 @@ class Book_gui(ttk.Frame):
         but_ok = ttk.Button(dlg, text="Bekræft", command=confirm)
         but_ok.grid(column=1,row=1)
 
-=======
-        curItem = self.db_view.item(self.db_view.focus())['values']
-
-        if len(curItem) > 0:
-            b = Book()
-            b.titel = curItem[0]
-            b.forfatter = curItem[1]
-            b.aarstal = curItem[2]
-            b.id = int(curItem[4])
-
-            self.data.slet_bog(b)
-            self.opdater_tabel()
->>>>>>> b8364ef3501439abd7bdc877944d3d74911206c0
 
 
     def rediger_bog(self):
@@ -133,7 +119,6 @@ class Book_gui(ttk.Frame):
             but_ok = ttk.Button(dlg, text="Gem ændringer", command=change_book)
             but_ok.grid(column=0,row=3)
 
-<<<<<<< HEAD
     def sorterTitel(self):
         self.data.sorter("titel")
         self.opdater_tabel()
@@ -194,17 +179,6 @@ class Book_gui(ttk.Frame):
         self.lblAnsatte.configure(text="Antal ansatte: {}".format(len(self.data.ansatte)))
         self.lblMoney.configure(text="Pengebeholdning: {}".format(self.data.money))
 
-=======
-    def salary(self):
-        self.data.salary()
-
-        self.after(10000, self.salary)
-
-    def costumer(self)
-
-
-        self.after(1000, self.costumer)
->>>>>>> 9bcc14d7623102408df1cf787b1f84017534296e
 
 
     def build_GUI(self):
@@ -282,8 +256,8 @@ class Book_gui(ttk.Frame):
 
         self.pack()
 
-        self.after(10000, self.salary)
-        self.after(1000, self.costumer)
+        self.after(10000, self.udbetal_loen)
+        self.after(1000, self.simulate_customer)
 
 root = tk.Tk()
 root.geometry("800x600")
