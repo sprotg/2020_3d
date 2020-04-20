@@ -17,6 +17,7 @@ class Book:
         #[1 stjerne, 2 stjerner, 3 stjerner...]
         self.ratings = [0,0,0,0,0]
         self.id = -1
+        self.pris = randint(50,400)
 
     def get_rating(self):
         r = 0

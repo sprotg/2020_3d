@@ -12,6 +12,7 @@ class Book_gui(ttk.Frame):
         ttk.Frame.__init__(self, master)
 
         self.data = Books_data(False)
+        self.kurv = []
 
         self.build_GUI()
 
@@ -180,6 +181,29 @@ class Book_gui(ttk.Frame):
         self.lblMoney.configure(text="Pengebeholdning: {}".format(self.data.money))
 
 
+    def tilfoj_kurv(self):
+        curItem = self.db_view.item(self.db_view.focus())['values']
+        if len(curItem) > 0:
+            #Tilføj id til kurven
+            self.kurv.append(curItem[4])
+            b = self.data.get_book(curItem[4])
+            self.kurv_text.configure(state='normal')
+            self.kurv_text.insert(tk.END, b.titel + ',' + str(b.pris) + '\n')
+            self.kurv_text.configure(state='disabled')
+            # Autoscroll to the bottom
+            self.kurv_text.yview(tk.END)
+
+    def koeb(self):
+        total = 0
+        for bog in self.kurv:
+            b = self.data.get_book(bog)
+            total += b.pris
+        self.data.indtaegt(total)
+        self.log_text("En kunde fyldte sin kurv for {} kr.".format(total))
+        self.kurv_text.configure(state='normal')
+        self.kurv_text.delete('1.0', tk.END)
+        self.kurv_text.configure(state='disabled')
+        self.kurv = []
 
     def build_GUI(self):
         self.tabs = ttk.Notebook(self)
@@ -201,7 +225,15 @@ class Book_gui(ttk.Frame):
         self.del_button = ttk.Button(knap_frame, text="Slet bog", command=self.slet_bog)
         self.del_button.pack(side=tk.TOP)
 
+        self.add_button = ttk.Button(knap_frame, text="Tilføj til kurv", command=self.tilfoj_kurv)
+        self.add_button.pack(side=tk.TOP)
 
+        self.buy_button = ttk.Button(knap_frame, text="Køb", command=self.koeb)
+        self.buy_button.pack(side=tk.TOP)
+
+        self.kurv_text = ScrolledText(knap_frame, state='disabled', width=20,height=5)
+        self.kurv_text.pack(side=tk.TOP)
+        self.kurv_text.configure(font='TkFixedFont')
 
         self.cons = ScrolledText(sim_fane, state='disabled', height=12)
         self.cons.pack(side = tk.TOP)
