@@ -1,4 +1,10 @@
+from random import randint
 import csv
+
+class Employee:
+
+    def __init__(self):
+        self.wage = randint(900,1000)
 
 class Book:
 
@@ -12,14 +18,14 @@ class Book:
 
     def get_rating(self):
         r = 0
-
+        total = 0
         for i in range(0,len(self.ratings)):
             r += (i+1)*self.ratings[i]
 
         return r/sum(self.ratings)
 
     def give_rating(self, r):
-        if 0 < r <= 5:
+        if 0 <= r <= 5:
             self.ratings[int(r)-1] += 1
         else:
             print("Fejl, rating er ikke gyldig")
@@ -57,13 +63,51 @@ class Books_data:
             self.books.append(b)
         print("Indlæst {} bøger".format(len(self.books)))
 
+        #Lidt penge til at starte med
+        self.money = 100000
+        #En enkelt ansat i butikken
+        self.ansatte = []
+        self.ansatte.append(Employee())
+
+    def ansaet(self):
+        self.ansatte.append(Employee())
+
+    def fyr(self):
+        a = randint(0,len(self.ansatte)-1)
+        self.ansatte.pop(a)
+
+    def indtaegt(self, amount):
+        #(Opgave 3)
+        #Her skal pengene sættes ind på kontoen
+        self.money += amount
+
+    def udbetal_loen(self):
+        #(Opgave 3)
+        #Her skal programmet løbe gennem listen af ansatte
+        #og udregne deres samlede løn. Pengene skal trækkes fra self.money
+        #Beløbet returneres til sidst, så det kan vises i konsollen.
+        amount = 0
+        for a in self.ansatte:
+            amount += a.wage
+        self.money -= amount
+        return amount
+
+    def sorter(self, felt):
+        if felt == "titel":
+            self.books.sort(key=lambda x:x.titel)
+        elif felt == "forfatter":
+            self.books.sort(key=lambda x:x.forfatter)
+        elif felt == "aarstal":
+            self.books.sort(key=lambda x:str(x.aarstal))
+        elif felt == "rating":
+            self.books.sort(key=lambda x:x.get_rating())
+
     def get_book_list(self, n=0):
         '''
         Returnerer en liste med n bøger.
         '''
         if n > 0:
             n = min(n, len(self.books)-1)
-        else:
             n = len(self.books)-1
         return self.books[0:n]
 

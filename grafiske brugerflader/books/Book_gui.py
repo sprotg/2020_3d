@@ -1,13 +1,18 @@
 import tkinter as tk
+from tkinter.scrolledtext import ScrolledText
 import tkinter.ttk as ttk
-from Book_data import Book, Books_data
+from math import sqrt
+
+from random import randint
+
+from Book_data import Book, Books_data, Employee
 
 class Book_gui(ttk.Frame):
     def __init__(self, master=None):
         ttk.Frame.__init__(self, master)
 
         self.data = Books_data(False)
-
+        
         self.build_GUI()
 
         self.opdater_tabel()
@@ -30,10 +35,10 @@ class Book_gui(ttk.Frame):
             self.can.delete("all")
             print(b.ratings[0]/sum(b.ratings))
 
-            for i in range(len(b.ratings)):
-                self.can.create_rectangle(10 + 30*i,190,30 + 30*i,190-200*(b.ratings[i]/sum(b.ratings)))
-            self.can.create_line(5,195,185,195, arrow=tk.LAST)
             self.can.create_line(5,195,5,5, arrow=tk.LAST)
+            self.can.create_line(5,195,165,195, arrow=tk.LAST)
+            for i in range(0,len(b.ratings)):
+                self.can.create_rectangle(i*25 + 10,190,i*25 + 30,190-200*(b.ratings[i]/sum(b.ratings)))
 
 
     def slet_bog(self):
@@ -96,13 +101,81 @@ class Book_gui(ttk.Frame):
             but_ok = ttk.Button(dlg, text="Gem ændringer", command=change_book)
             but_ok.grid(column=0,row=3)
 
+    def sorterTitel(self):
+        self.data.sorter("titel")
+        self.opdater_tabel()
+
+    def sorterForfatter(self):
+        self.data.sorter("forfatter")
+        self.opdater_tabel()
+
+    def sorterAarstal(self):
+        self.data.sorter("aarstal")
+        self.opdater_tabel()
+
+    def sorterRating(self):
+        self.data.sorter("rating")
+        self.opdater_tabel()
+
+    def log_text(self, msg):
+        self.cons.configure(state='normal')
+        self.cons.insert(tk.END, msg + '\n')
+        self.cons.configure(state='disabled')
+        # Autoscroll to the bottom
+        self.cons.yview(tk.END)
+
+    def ansaet(self):
+        #(Opgave 4)
+        #Denne funktion skal ansætte en ny Employee i butikken
+        self.data.ansaet()
+        self.update_ui()
+
+    def fyr(self):
+        #(Opgave 4)
+        #Denne funktion skal fyre en af de ansatte
+        self.data.fyr()
+        self.update_ui()
+
+    def udbetal_loen(self):
+        l = self.data.udbetal_loen()
+        self.log_text("Der blev udbetalt {} i løn".format(l))
+        self.update_ui()
+
+        self.after(30000, self.udbetal_loen)
+
+    def simulate_customer(self):
+        #Udsalg?
+        rabat = self.sc_tilbud.scale.get() * 0.01
+
+        amount = int(rabat * randint(100,200) + randint(0,int(500*sqrt(len(self.data.ansatte)))))
+        self.data.indtaegt(amount)
+
+        self.log_text("En kunde købte for {}".format(amount))
+        self.update_ui()
+
+        #Hvis der er udsalg, kommer der hurtigere nye kunder!
+        self.after(int(5000*rabat), self.simulate_customer)
+
+
+    def update_ui(self):
+        self.lblAnsatte.configure(text="Antal ansatte: {}".format(len(self.data.ansatte)))
+        self.lblMoney.configure(text="Pengebeholdning: {}".format(self.data.money))
+
 
 
     def build_GUI(self):
-        right_frame = ttk.Frame(self)
+        self.tabs = ttk.Notebook(self)
+        bog_fane = ttk.Frame(self.tabs)
+        sim_fane = ttk.Frame(self.tabs)
+
+        self.tabs.add(bog_fane, text='Bøger')
+        self.tabs.add(sim_fane, text='Simulering')
+
+        right_frame = ttk.Frame(bog_fane)
         top_frame = ttk.Frame(right_frame)
         data_frame = ttk.Frame(right_frame)
-        knap_frame = ttk.Frame(self)
+        knap_frame = ttk.Frame(bog_fane)
+
 
         self.edit_button = ttk.Button(knap_frame, text="Rediger bog", command=self.rediger_bog)
         self.edit_button.pack(side=tk.TOP)
@@ -110,12 +183,35 @@ class Book_gui(ttk.Frame):
         self.del_button = ttk.Button(knap_frame, text="Slet bog", command=self.slet_bog)
         self.del_button.pack(side=tk.TOP)
 
+
+
+        self.cons = ScrolledText(sim_fane, state='disabled', height=12)
+        self.cons.pack(side = tk.TOP)
+        self.cons.configure(font='TkFixedFont')
+        self.after(1000, self.simulate_customer)
+
+        butAnsaet = ttk.Button(sim_fane, text="Ansæt en person", command=self.ansaet)
+        butAnsaet.pack(side=tk.TOP)
+        butFyr = ttk.Button(sim_fane, text="Fyr en person", command=self.fyr)
+        butFyr.pack(side=tk.TOP)
+        self.after(3000, self.udbetal_loen)
+        self.lblMoney = ttk.Label(sim_fane, text="Pengebeholdning: {}".format(self.data.money))
+        self.lblMoney.pack(side=tk.TOP)
+        self.lblAnsatte = ttk.Label(sim_fane, text="Antal ansatte: {}".format(len(self.data.ansatte)))
+        self.lblAnsatte.pack(side=tk.TOP)
+        self.sc_tilbud = ttk.LabeledScale (sim_fane,from_=50,to=110)
+        self.sc_tilbud.pack(side=tk.TOP)
+
         self.db_view = ttk.Treeview(data_frame, column=("column1", "column2", "column3", "column4", "column5"), show='headings')
         self.db_view.bind("<ButtonRelease-1>", self.on_book_selected)
-        self.db_view.heading("#1", text="Titel")
-        self.db_view.heading("#2", text="Forfatter")
-        self.db_view.heading("#3", text="Årstal")
-        self.db_view.heading("#4", text="Rating")
+        self.db_view.heading("#1", text="Titel", command=self.sorterTitel)
+        self.db_view.column("#1",minwidth=0,width=150, stretch=tk.NO)
+        self.db_view.heading("#2", text="Forfatter", command=self.sorterForfatter)
+        self.db_view.column("#2",minwidth=0,width=150, stretch=tk.NO)
+        self.db_view.heading("#3", text="Årstal", command=self.sorterAarstal)
+        self.db_view.column("#3",minwidth=0,width=80, stretch=tk.NO)
+        self.db_view.heading("#4", text="Rating", command=self.sorterRating)
+        self.db_view.column("#4",minwidth=0,width=80, stretch=tk.NO)
         self.db_view.heading("#5", text="id")
         #Læg mærke til at kolonne 5 ikke bliver vist.
         #Vi kan stadig finde id på den bog der er valgt,
@@ -138,6 +234,8 @@ class Book_gui(ttk.Frame):
         data_frame.pack(side = tk.TOP)
         knap_frame.pack(side = tk.LEFT, fill=tk.Y)
         right_frame.pack(side=tk.RIGHT, fill=tk.Y)
+        self.tabs.pack(expand=1, fill="both")
+
         self.pack()
 
 root = tk.Tk()
