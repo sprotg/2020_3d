@@ -4,7 +4,13 @@ import csv
 class Employee:
 
     def __init__(self):
+<<<<<<< HEAD
         self.wage = randint(900,1000)
+=======
+        self.name = ""
+        self.position = ""
+        self.wage = randint(500,600)
+>>>>>>> 9bcc14d7623102408df1cf787b1f84017534296e
 
 class Book:
 
@@ -63,6 +69,7 @@ class Books_data:
             self.books.append(b)
         print("Indlæst {} bøger".format(len(self.books)))
 
+<<<<<<< HEAD
         #Lidt penge til at starte med
         self.money = 100000
         #En enkelt ansat i butikken
@@ -101,11 +108,30 @@ class Books_data:
             self.books.sort(key=lambda x:str(x.aarstal))
         elif felt == "rating":
             self.books.sort(key=lambda x:x.get_rating())
+=======
+
+        self.employees = []
+        self.employees.append(Employee())
+
+        self.money = 10000
+
+    def salary(self):
+        total = 0
+        for ansat in self.employees:
+            total += ansat.wage
+        self.money -= total
+        print("Der blev udbetalt løn: {} bogpenge".format(total))
+
+    def sorter(self):
+        self.books.sort(key=lambda x:-1*x.get_rating())
+
+>>>>>>> 9bcc14d7623102408df1cf787b1f84017534296e
 
     def get_book_list(self, n=0):
         '''
         Returnerer en liste med n bøger.
         '''
+        self.sorter()
         if n > 0:
             n = min(n, len(self.books)-1)
             n = len(self.books)-1
