@@ -12,10 +12,11 @@ class Book_gui(ttk.Frame):
         ttk.Frame.__init__(self, master)
 
         self.data = Books_data(False)
-        self.kurv = []
+        self.kurv = self.data.create_new_transaction()
 
         self.build_GUI()
 
+        self.opdater_transaktions_tabel()
         self.opdater_tabel()
 
     def opdater_tabel(self):
@@ -24,6 +25,15 @@ class Book_gui(ttk.Frame):
         self.db_view.delete(*self.db_view.get_children())
         for b in l:
             self.db_view.insert("", tk.END, values=(b.titel, b.forfatter, b.aarstal, b.get_rating(), b.id))
+
+    def opdater_transaktions_tabel(self):
+        self.trans_view.delete(*self.trans_view.get_children())
+        for t in self.data.transactions:
+            self.trans_view.insert("", tk.END, values=(t.id, t.get_amount(), t.status))
+
+    def on_trans_selected(self, event):
+        t = self.trans_view.item(self.trans_view.focus())['values']
+        print(t)
 
     def on_book_selected(self, event):
         curItem = self.db_view.item(self.db_view.focus())['values']
@@ -185,25 +195,27 @@ class Book_gui(ttk.Frame):
         curItem = self.db_view.item(self.db_view.focus())['values']
         if len(curItem) > 0:
             #Tilføj id til kurven
-            self.kurv.append(curItem[4])
-            b = self.data.get_book(curItem[4])
+            self.kurv.add_item(curItem[4])
             self.kurv_text.configure(state='normal')
-            self.kurv_text.insert(tk.END, b.titel + ',' + str(b.pris) + '\n')
+            self.kurv_text.delete('1.0', tk.END)
+            for i in self.kurv.items:
+                b = self.data.get_book(i)
+                self.kurv_text.insert(tk.END, b.titel + ',' + str(b.pris) + '\n')
             self.kurv_text.configure(state='disabled')
             # Autoscroll to the bottom
             self.kurv_text.yview(tk.END)
+        self.opdater_transaktions_tabel()
 
     def koeb(self):
-        total = 0
-        for bog in self.kurv:
-            b = self.data.get_book(bog)
-            total += b.pris
-        self.data.indtaegt(total)
-        self.log_text("En kunde fyldte sin kurv for {} kr.".format(total))
+        pris = self.kurv.get_amount()
+        self.data.indtaegt(pris)
+        self.kurv.finalize()
+        self.log_text("En kunde fyldte sin kurv for {} kr.".format(pris))
         self.kurv_text.configure(state='normal')
         self.kurv_text.delete('1.0', tk.END)
         self.kurv_text.configure(state='disabled')
-        self.kurv = []
+        self.kurv = self.data.create_new_transaction()
+        self.opdater_transaktions_tabel()
 
     def build_GUI(self):
         self.tabs = ttk.Notebook(self)
@@ -270,6 +282,19 @@ class Book_gui(ttk.Frame):
         ysb = ttk.Scrollbar(data_frame, command=self.db_view.yview, orient=tk.VERTICAL)
         self.db_view.configure(yscrollcommand=ysb.set)
         self.db_view.pack(side = tk.TOP, fill=tk.BOTH)
+
+        self.trans_view = ttk.Treeview(knap_frame, column=("column1", "column2", "column3"), show='headings')
+        self.trans_view.bind("<ButtonRelease-1>", self.on_trans_selected)
+        self.trans_view.heading("#1", text="id")
+        self.trans_view.column("#1",minwidth=0,width=20, stretch=tk.NO)
+        self.trans_view.heading("#2", text="Pris")
+        self.trans_view.column("#2",minwidth=0,width=30, stretch=tk.NO)
+        self.trans_view.heading("#3", text="Status")
+        self.trans_view.column("#3",minwidth=0,width=80, stretch=tk.NO)
+        self.trans_view["displaycolumns"]=("column1", "column2", "column3")
+        ysb = ttk.Scrollbar(data_frame, command=self.trans_view.yview, orient=tk.VERTICAL)
+        self.trans_view.configure(yscrollcommand=ysb.set)
+        self.trans_view.pack(side = tk.TOP, fill=tk.BOTH)
 
         #Top Frame
         self.can = tk.Canvas(top_frame, width=200, height=200)

@@ -8,6 +8,32 @@ class Employee:
         self.position = ""
         self.wage = randint(500,600)
 
+class Transaction:
+
+    def __init__(self, book_data):
+        self.id = -1
+        self.items = []
+        #Status:
+        # 0: Indkøb
+        # 1: Bestilt
+        # 2: Betalt
+        self.status = 0
+        self.book_data = book_data
+
+    def add_item(self, id):
+        self.items.append(id)
+
+    def finalize(self):
+        self.status = 2
+
+    def get_amount(self):
+        val = 0
+        for id in self.items:
+            b = self.book_data.get_book(id)
+            val += b.pris
+        return val
+
+
 class Book:
 
     def __init__(self):
@@ -72,6 +98,29 @@ class Books_data:
         self.ansatte = []
         self.ansatte.append(Employee())
 
+        self.transactions = []
+
+    def add_transaction(self, t):
+        self.transactions.append(t)
+
+    def get_transaction(self, id):
+        r = None
+        for t in self.transactions:
+            if t.id == id:
+                r = t
+        return r
+
+    def create_new_transaction(self):
+        if len(self.transactions) > 0:
+            t = max(self.transactions, key = lambda t: t.id)
+            id = t.id + 1
+        else:
+            id = 1
+        t = Transaction(self)
+        t.id = id
+        self.transactions.append(t)
+        return t
+
     def ansaet(self):
         self.ansatte.append(Employee())
 
@@ -104,12 +153,14 @@ class Books_data:
             self.books.sort(key=lambda x:str(x.aarstal))
         elif felt == "rating":
             self.books.sort(key=lambda x:x.get_rating())
+        elif felt == "id":
+            self.books.sort(key=lambda x:x.id)
 
     def get_book_list(self, n=0):
         '''
         Returnerer en liste med n bøger.
         '''
-        self.sorter("titel")
+        self.sorter("id")
         if n > 0:
             n = min(n, len(self.books)-1)
             n = len(self.books)-1
