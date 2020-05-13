@@ -37,6 +37,9 @@ class Vector(Point):
         #Prøv selv
         pass
 
+    def add(self, v1: Vector) -> None:
+        self.x += v1.x
+
     def __str__(self):
         '''
         Her defineres hvordan en vektor skal printes til konsollen
@@ -99,8 +102,34 @@ class Line():
         '''
         return "(x,y,z) = <{}, {}, {}> + t*<{}, {}, {}>".format(self.p0.x, self.p0.y, self.p0.z, self.d.x, self.d.y, self.d.z)
 
+class Plane():
+    def __init__(self, p0, d1, d2):
+        self.p0 = p0
+        self.d1 = d1
+        self.d2 = d2
+
+    @classmethod
+    def createFromThreePoints(cls, p1,p2,p3):
+        d1 = Vector.connect(p1,p2)
+        d2 = Vector.connect(p1,p3)
+        return cls(p1, d1, d2)
+
+def intersection(p, l):
+    #Skæringspunkt mellem plan og linje
+    pass
+
+def distancePointPlane(po, pl):
+    #afstand fra punkt til plan
+    pass
 
 
+def distance(p1, p2):
+    #afstand mellem to punkter
+    pass
+
+def distanceLinePoint(l1, p1):
+    #afstand fra punkt til linje
+    pass
 
 def scale(s: (float, int), v: Vector) -> Vector:
     '''
@@ -136,6 +165,18 @@ def dot(v1: Vector, v2: Vector) -> float:
     #prøv selv
     pass
 
+def angle(v1: Vector, v2: Vector):
+    pass
+
+def cross(v1: Vector, v2: Vector):
+    pass
+
+def perpendicular(v1: Vector, v2: Vector):
+    pass
+
+def projection(v1: Vector, v2: Vector):
+    pass
+
 
 
 if __name__ == "__main__":
@@ -149,6 +190,9 @@ if __name__ == "__main__":
     v1 = Vector.fromPoint(p1)
     v2 = Vector(p2.x, p2.y, p2.z)
     print(v1, v2)
+
+    v1.add(v2)
+    v3 = add(v1,v2)
 
     l1 = Line.createTwoPoints(p1,p2)
     print(l1)
