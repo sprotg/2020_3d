@@ -6,6 +6,8 @@ import numpy as np
 #Se desuden dette link, for tegning af linjestykker:
 # http://nasseralkmim.github.io/notes/2016/08/11/drawing-3d-lines-in-python/
 
+
+
 def randrange(n, vmin, vmax):
     '''
     Helper function to make an array of random numbers having shape (n, )
