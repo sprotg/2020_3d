@@ -68,9 +68,9 @@ class Books_data:
         eller kun en lille del.
         '''
         if samples:
-            infile = open('data\\samples\\books.csv', mode='r', encoding="utf8")
+            infile = open('data/samples/books.csv', mode='r', encoding="utf8")
         else:
-            infile = open('data\\books.csv', mode='r', encoding="utf8")
+            infile = open('data/books.csv', mode='r', encoding="utf8")
         reader = csv.DictReader(infile)
 
         self.books = []
