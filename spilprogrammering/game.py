@@ -1,10 +1,12 @@
 import random
+import pygame
 
 class Game():
-    def __init__(self):
+    def __init__(self, lyd1):
         self.grid = [[random.randint(1,5) for y in range(0,10)] for x in range(0,10)]
         self.anim = [[0 for y in range(0,10)] for x in range(0,10)]
         print(self.grid)
+        self.lyd1 = lyd1
 
     def build_grid(self):
         #import pdb; pdb.set_trace()
@@ -38,7 +40,7 @@ class Game():
                 #Detect horizontal match
                 if self.grid[x][y] == self.grid[x-1][y] and self.grid[x][y] == self.grid[x+1][y]:
                     c = self.grid[x][y]
-
+                    self.lyd1.play(1)
                     self.grid[x-1][y] = 0
                     self.grid[x][y] = 0
                     self.grid[x+1][y] = 0
