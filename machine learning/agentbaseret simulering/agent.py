@@ -35,13 +35,13 @@ class Game():
 
     def update(self):
         for a in self.agents:
-            a.update()
+            a.update(self)
         self.round_timer -= 1
         if self.round_timer < 0:
             self.round_timer = 500
             self.generate_food()
 
-
+game = Game(800,600)
 
 def draw_game():
     pygame.draw.rect(screen, (0,0,0), pygame.Rect(0,0,800,600))
@@ -73,7 +73,7 @@ while not done:
         if event.type == pygame.MOUSEBUTTONDOWN:
             pass
 
-    update()
+    game.update()
 
     output_logic(tilstand)
 
