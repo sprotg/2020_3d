@@ -15,10 +15,9 @@ tilstand = 1
 
 class Car():
     def __init__(self, weights):
-        self.pos = [00,250]
+        self.pos = [0,250]
         self.dir = 0
         self.weights = weights
-        self.weights[-1] = 0
         self.steer = 0
 
     def update(self, inputs):
@@ -43,7 +42,7 @@ class Car():
         x = self.dot(inputs,self.weights[0:len(inputs)]) + self.weights[-1]
         L = 0.1
         k = 1
-        return L/(1+math.exp(-k*x))
+        return (L/(1+math.exp(-k*x)))-0.5
 
 
 
@@ -51,7 +50,7 @@ class Game():
     def __init__(self, width, height):
         self.w = width
         self.h = height
-        self.car = Car([random.random()-0.5 for i in range(6)])
+        self.car = Car([random.random()*2-1 for i in range(6)])
         self.latest_input = []
         self.points = []
         self.population = []
@@ -90,13 +89,17 @@ class Game():
         game.latest_input = inputs
         self.car.update(inputs)
 
-        if self.car.pos[1] > 350 or self.car.pos[1] < 150 or self.car.pos[0] > 550 or bane.get_at((int(self.car.pos[0]),int(self.car.pos[1]))) != (0,0,0,255):
+        if self.car.pos[0] > 550 or bane.get_at((int(self.car.pos[0]),int(self.car.pos[1]))) != (0,0,0,255):
             self.population.append((self.car.weights, self.car.pos[0]))
+            if len(self.population) > 10:
+                self.population.sort(key = lambda x:x[1], reverse=True)
+                self.population = self.population[0:10]
+
+
             print("Fitness: {}".format(self.car.pos[0]))
             self.car = Car([random.random()*2-1 for i in range(6)])
             if len(game.population) > 10 and random.random() > 0.5:
                 self.car.weights = game.get_weights_by_selection()
-                self.car.weights[-1] = 0
                 print("Selection!")
 
 game = Game(500,500)
@@ -111,6 +114,8 @@ def draw_game():
 
     screen.blit(myfont.render("inputs: {}".format(game.latest_input), 0, (255,255,255)), (20,20))
     screen.blit(myfont.render("output: {:0.2f}".format(game.car.steer), 0, (255,255,255)), (20,40))
+    screen.blit(myfont.render("network: {}".format(game.car.weights), 0, (255,255,255)), (20,60))
+
     for p in game.points:
         pygame.draw.ellipse(screen, (200,100,200), pygame.Rect(p[0],p[1], 5, 5))
 
