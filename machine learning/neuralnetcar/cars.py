@@ -98,7 +98,7 @@ class Game():
 
             print("Fitness: {}".format(self.car.pos[0]))
             self.car = Car([random.random()*2-1 for i in range(6)])
-            if len(game.population) > 10 and random.random() > 0.5:
+            if len(game.population) > 2 and random.random() > 0.5:
                 self.car.weights = game.get_weights_by_selection()
                 print("Selection!")
 
