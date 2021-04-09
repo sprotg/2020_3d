@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+{% if loggedin == True %}
+<div class="form-group">
+  <form class="form-control" action="/tilfoj_var" method="post">
+    <label class="form-control-static" for="text">Opret ny trackingvariabel</label>
+    <input class="form-control" rows="5" id="text" name="name"></input>
+
+    <input type="radio" id="tal" name="type" value="tal">
+    <label for="tal">Talværdi</label><br>
+    <input type="radio" id="skala" name="type" value="skala">
+    <label for="female">Skala 1-5</label><br>
+
+    <button class="form-control" type="submit" name="button">Send</button>
+  </form>
+</div>
+{% else %}
+<div class="alert alert-warning" role="alert">
+  <h2>Du skal være logget ind for at oprette en ny trackingvariabel</h2>
+  <a href="/login">Gå til login</a>
+</div>
+{% endif %}
+{% endblock content %}

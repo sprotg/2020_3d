@@ -8,7 +8,8 @@
     <div class="media-body">
       <small class="text-muted">{{ i['date'] }}</small>
       <p class="article-content">
-        {{ i['text'] }}
+        {{ i['text'] }}<br>
+            <img src="/fig/{{i['text']}}" alt="En figur fra matplotlib">
       </p>
       <form class="form-control" action="visideer" method="get">
           <button class="form-control" name="id" value="{{ i['id'] }}" type="submit">Se mere</button>
